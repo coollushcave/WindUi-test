@@ -1,3 +1,53 @@
+local AutoCollectConnection = nil
+local CurrentTarget = nil
+
+local function FindBullEssence()
+    for _, item in ipairs(workspace.Items:GetChildren()) do
+        if item.Name == "Bull's essence" and item:FindFirstChild("HumanoidRootPart") or item:FindFirstChildWhichIsA("BasePart") then
+            return item
+        end
+    end
+    return nil
+end
+
+local function StartAutoCollect()
+    if AutoCollectConnection then return end
+
+    AutoCollectConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        local character = game.Players.LocalPlayer.Character
+        if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+        local root = character.HumanoidRootPart
+
+        -- Kalau sedang di target dan target masih ada
+        if CurrentTarget and CurrentTarget.Parent then
+            local targetRoot = CurrentTarget:FindFirstChild("HumanoidRootPart") or CurrentTarget:FindFirstChildWhichIsA("BasePart")
+            if targetRoot then
+                root.CFrame = targetRoot.CFrame + Vector3.new(0, 5, 0)  -- TP ke atas item
+                return
+            end
+        end
+
+        -- Cari target baru kalau target lama sudah hilang
+        local newTarget = FindBullEssence()
+        if newTarget then
+            CurrentTarget = newTarget
+            local targetRoot = newTarget:FindFirstChild("HumanoidRootPart") or newTarget:FindFirstChildWhichIsA("BasePart")
+            if targetRoot then
+                root.CFrame = targetRoot.CFrame + Vector3.new(0, 5, 0)
+            end
+        end
+    end)
+end
+
+local function StopAutoCollect()
+    if AutoCollectConnection then
+        AutoCollectConnection:Disconnect()
+        AutoCollectConnection = nil
+    end
+    CurrentTarget = nil
+end
+
 local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
 
 local Window = WindUI:CreateWindow({
@@ -17,54 +67,71 @@ local Window = WindUI:CreateWindow({
     },
 })
 
--- Combat Tab
+-- Main
 local CombatTab = Window:Tab({
-    Title = "Combat",
-    Icon = "solar:sword-bold",
+    Title = "Main",
+    Icon = "solar:settings-bold",
 })
 
 CombatTab:Toggle({
     Title = "Kill Aura",
 })
-
 CombatTab:Space()
 
 CombatTab:Toggle({
     Title = "Auto Parry",
 })
-
 CombatTab:Space()
 
 CombatTab:Toggle({
     Title = "Auto Dodge",
 })
 
-CombatTab:Space()
-
-CombatTab:Toggle({
-    Title = "Infinite Stamina",
+-- Items
+local ItemsTab = Window:Tab({
+    Title = "Items",
+    Icon = "solar:settings-bold",
 })
 
--- Visual Tab
-local VisualTab = Window:Tab({
-    Title = "Visual",
-    Icon = "solar:eye-bold",
+ItemsTab:Toggle({
+    Title = "Auto collect",
+    Desc = "Collect priority items without waiting for the round countdown",
+    Callback = function(state)
+        if state then
+            StartAutoCollect()
+            WindUI:Notify({Title = "Auto Collect", Content = "ON - Targeting Bull's Essence"})
+        else
+            StopAutoCollect()
+            WindUI:Notify({Title = "Auto Collect", Content = "OFF"})
+        end
+    end
 })
 
-VisualTab:Toggle({
-    Title = "Player ESP",
+ItemsTab:Space()
+
+ItemsTab:Toggle({
+    Title = "Auto pick up",
+    Desc = "",
 })
 
-VisualTab:Space()
+ItemsTab:Space()
 
-VisualTab:Colorpicker({
-    Title = "ESP Color",
-    Default = Color3.fromHex("#30ff6a"),
+ItemsTab:Toggle({
+    Title = "Auto heal",
+    Desc = "Uses healing items when HP drops",
 })
 
--- Misc
+ItemsTab:Space()
+
+ItemsTab:Toggle({
+    Title = "Auto use Permanent items",
+    Desc = "Uses parmenent boots on pickup",
+})
+
+
+-- Teleports
 local MiscTab = Window:Tab({
-    Title = "Misc",
+    Title = "Teleports",
     Icon = "solar:settings-bold",
 })
 
@@ -77,6 +144,54 @@ MiscTab:Space()
 MiscTab:Slider({
     Title = "WalkSpeed",
     Value = { Min = 16, Max = 200, Default = 60 },
+})
+
+-- Coombat
+local MiscTab = Window:Tab({
+    Title = "Teleports",
+    Icon = "solar:settings-bold",
+})
+
+-- Beta
+local BetaTab = Window:Tab({
+    Title = "Beta",
+    Icon = "solar:settings-bold",
+})
+
+BetaTab:Toggle({
+    Title = "Collect Crates",
+})
+
+BetaTab:Space()
+
+BetaTab:Toggle({
+    Title = "Auto Collect crates",
+})
+
+BetaTab:Space()
+
+BetaTab:Toggle({
+    Title = "Crate Aura",
+})
+
+BetaTab:Space()
+
+BetaTab:Toggle({
+    Title = "Early auto collect",
+})
+
+BetaTab:Space()
+
+-- Safety
+local MiscTab = Window:Tab({
+    Title = "Safety",
+    Icon = "solar:settings-bold",
+})
+
+-- Settings
+local MiscTab = Window:Tab({
+    Title = "Settings",
+    Icon = "solar:settings-bold",
 })
 
 WindUI:Notify({
