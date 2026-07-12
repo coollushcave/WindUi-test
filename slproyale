@@ -3,9 +3,8 @@ local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footag
 local Window = WindUI:CreateWindow({
     Title = "Combat Hub",
     Icon = "solar:sword-bold",
-    Folder = "CombatHubV2",
+    Folder = "CombatHub",
     NewElements = true,
-
     OpenButton = {
         Title = "Open Combat Hub",
         Enabled = true,
@@ -13,114 +12,90 @@ local Window = WindUI:CreateWindow({
     },
 })
 
--- ==================== TABS ====================
-
+-- ==================== COMBAT ====================
 local CombatTab = Window:Tab({
     Title = "Combat",
     Icon = "solar:sword-bold",
 })
 
+CombatTab:Toggle({
+    Title = "Kill Aura",
+    Desc = "Auto hit nearby enemy",
+})
+
+CombatTab:Space()
+
+CombatTab:Toggle({
+    Title = "Auto Parry",
+    Desc = "Auto block/parry",
+})
+
+CombatTab:Space()
+
+CombatTab:Toggle({
+    Title = "Auto Dodge",
+})
+
+CombatTab:Space()
+
+CombatTab:Toggle({
+    Title = "Infinite Stamina",
+})
+
+-- ==================== VISUAL ====================
 local VisualTab = Window:Tab({
     Title = "Visual",
     Icon = "solar:eye-bold",
 })
 
+VisualTab:Toggle({
+    Title = "Player ESP",
+})
+
+VisualTab:Space()
+
+VisualTab:Toggle({
+    Title = "Health Bar",
+})
+
+VisualTab:Space()
+
+VisualTab:Colorpicker({
+    Title = "ESP Color",
+    Default = Color3.fromHex("#ff2d55"),
+})
+
+-- ==================== MISC ====================
 local MiscTab = Window:Tab({
     Title = "Misc",
     Icon = "solar:settings-bold",
 })
 
--- ==================== COMBAT ====================
-
-local CombatSection = CombatTab:Section({
-    Title = "Combat Features",
-})
-
-CombatSection:Toggle({
-    Title = "Kill Aura",
-    Desc = "Auto attack nearby players",
-    Flag = "KillAura",
-})
-
-CombatSection:Slider({
-    Title = "Kill Aura Range",
-    Value = { Min = 10, Max = 60, Default = 25 },
-    Flag = "KillAuraRange",
-})
-
-CombatSection:Toggle({
-    Title = "Auto Parry",
-    Desc = "Automatic block/parry",
-    Flag = "AutoParry",
-})
-
-CombatSection:Toggle({
-    Title = "Auto Dodge",
-    Flag = "AutoDodge",
-})
-
-CombatSection:Toggle({
-    Title = "Infinite Stamina / Energy",
-    Flag = "InfStamina",
-})
-
--- ==================== VISUAL ====================
-
-local VisualSection = VisualTab:Section({
-    Title = "Visuals",
-})
-
-VisualSection:Toggle({
-    Title = "Player ESP",
-    Flag = "ESP",
-})
-
-VisualSection:Toggle({
-    Title = "Health Bar",
-    Flag = "HealthBar",
-})
-
-VisualSection:Colorpicker({
-    Title = "ESP Color",
-    Default = Color3.fromHex("#ff2d55"),
-})
-
-VisualSection:Toggle({
-    Title = "Full Bright",
-    Flag = "FullBright",
-})
-
--- ==================== MISC ====================
-
-local MiscSection = MiscTab:Section({
-    Title = "Miscellaneous",
-})
-
-MiscSection:Toggle({
+MiscTab:Toggle({
     Title = "Speed Hack",
-    Flag = "SpeedHack",
 })
 
-MiscSection:Slider({
+MiscTab:Space()
+
+MiscTab:Slider({
     Title = "WalkSpeed",
-    Value = { Min = 16, Max = 250, Default = 70 },
-    Flag = "WalkSpeedValue",
+    Value = { Min = 16, Max = 200, Default = 60 },
 })
 
-MiscSection:Button({
-    Title = "Copy My Position",
+MiscTab:Space()
+
+MiscTab:Button({
+    Title = "Copy Position",
     Callback = function()
-        local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if root then
-            setclipboard(tostring(root.Position))
-            WindUI:Notify({Title = "Success", Content = "Position copied to clipboard!"})
+        local pos = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if pos then
+            setclipboard(tostring(pos.Position))
+            WindUI:Notify({Title = "Copied", Content = "Position copied!"})
         end
     end
 })
 
--- Notifikasi saat load
 WindUI:Notify({
     Title = "Combat Hub",
-    Content = "Loaded successfully! 🔥",
-    Duration = 4,
+    Content = "Loaded!",
 })
