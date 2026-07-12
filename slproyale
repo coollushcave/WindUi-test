@@ -13,3 +13,18 @@ local Window = WindUI:CreateWindow({
         Draggable = true,
     },
 })
+
+Window:Button({
+    Title = "Tombol",
+    Callback = function()
+        print("Tombol diklik!")
+    end
+})
+
+Window:Toggle({
+    Title = "Toggle",
+    Desc = "Deskripsi toggle",
+    Callback = function(state)
+        print("State:", state)
+    end
+})
