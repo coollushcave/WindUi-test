@@ -55,23 +55,6 @@ local function AutoCollectLoop()
     end
 end
 
--- ==================== TOGGLE ====================
-ItemsTab:Toggle({
-    Title = "Auto collect",
-    Desc = "Collect priority items without waiting for the round countdown",
-    Callback = function(state)
-        AutoCollectEnabled = state
-        CurrentTarget = nil
-        
-        if state then
-            WindUI:Notify({Title = "Auto Collect", Content = "ON - Targeting nearest Bull's Essence"})
-            task.spawn(AutoCollectLoop)  -- Jalankan di thread terpisah
-        else
-            WindUI:Notify({Title = "Auto Collect", Content = "OFF"})
-        end
-    end
-})
-
 local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
 
 local Window = WindUI:CreateWindow({
@@ -121,11 +104,13 @@ ItemsTab:Toggle({
     Title = "Auto collect",
     Desc = "Collect priority items without waiting for the round countdown",
     Callback = function(state)
+        AutoCollectEnabled = state
+        CurrentTarget = nil
+        
         if state then
-            StartAutoCollect()
-            WindUI:Notify({Title = "Auto Collect", Content = "ON - Targeting Bull's Essence"})
+            WindUI:Notify({Title = "Auto Collect", Content = "ON - Targeting nearest Bull's Essence"})
+            task.spawn(AutoCollectLoop)  -- Jalankan di thread terpisah
         else
-            StopAutoCollect()
             WindUI:Notify({Title = "Auto Collect", Content = "OFF"})
         end
     end
