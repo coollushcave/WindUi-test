@@ -1,30 +1,169 @@
 local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
 
 local Window = WindUI:CreateWindow({
-    Title = "Nama Hub Kamu",
-    Icon = "solar:folder-2-bold-duotone",   -- contoh icon
-    Folder = "NamaFolderSave",              -- penting buat save config
-    -- Theme = "Dark",                      -- bisa diubah
+    Title = "Combat Hub",
+    Icon = "sword",                    -- atau "solar:sword-bold"
+    Folder = "CombatHub_Save",
     NewElements = true,
     
     OpenButton = {
-        Title = "Open UI",
+        Title = "Open Combat Hub",
         Enabled = true,
         Draggable = true,
+        Scale = 0.6,
     },
 })
 
-Window:Button({
-    Title = "Tombol",
+--   TABS
+
+local MainTab = Window:Tab({
+    Title = "Main",
+    Icon = "solar:home-2-bold",
+})
+
+local CombatTab = Window:Tab({
+    Title = "Combat",
+    Icon = "sword",
+})
+
+local VisualTab = Window:Tab({
+    Title = "Visual",
+    Icon = "eye",
+})
+
+local MiscTab = Window:Tab({
+    Title = "Misc",
+    Icon = "settings",
+})
+
+
+--   MAIN TAB
+
+
+MainTab:Section({ Title = "Status" })
+
+MainTab:Toggle({
+    Title = "Auto Enable",
+    Default = true,
+    Flag = "AutoEnable",
+})
+
+MainTab:Button({
+    Title = "Reset Character",
     Callback = function()
-        print("Tombol diklik!")
+        local player = game.Players.LocalPlayer
+        if player.Character then
+            player.Character:BreakJoints()
+        end
     end
 })
 
-Window:Toggle({
-    Title = "Toggle",
-    Desc = "Deskripsi toggle",
+
+--   COMBAT TAB
+
+
+CombatTab:Section({ Title = "Combat Features" })
+
+CombatTab:Toggle({
+    Title = "Kill Aura",
+    Desc = "Auto attack nearby enemies",
+    Flag = "KillAura",
     Callback = function(state)
-        print("State:", state)
+        print("Kill Aura:", state)
+        -- Taruh logic Kill Aura di sini
     end
+})
+
+CombatTab:Slider({
+    Title = "Kill Aura Range",
+    Value = { Min = 5, Max = 50, Default = 20 },
+    Flag = "KRange",
+})
+
+CombatTab:Toggle({
+    Title = "Auto Parry / Block",
+    Flag = "AutoParry",
+})
+
+CombatTab:Toggle({
+    Title = "Auto Dodge",
+    Flag = "AutoDodge",
+})
+
+CombatTab:Toggle({
+    Title = "Infinite Stamina",
+    Flag = "InfStamina",
+})
+
+--   VISUAL TAB
+
+VisualTab:Section({ Title = "ESP & Visual" })
+
+VisualTab:Toggle({
+    Title = "Player ESP",
+    Flag = "ESP",
+    Callback = function(state)
+        print("ESP:", state)
+    end
+})
+
+VisualTab:Toggle({
+    Title = "Show Health Bar",
+    Flag = "HealthBar",
+})
+
+VisualTab:Colorpicker({
+    Title = "ESP Color",
+    Default = Color3.fromHex("#ff0000"),
+    Flag = "ESPColor",
+})
+
+VisualTab:Toggle({
+    Title = "Full Bright",
+    Callback = function(state)
+        if state then
+            game:GetService("Lighting").Brightness = 2
+            game:GetService("Lighting").ClockTime = 14
+        end
+    end
+})
+
+--   MISC TAB
+
+MiscTab:Section({ Title = "Miscellaneous" })
+
+MiscTab:Toggle({
+    Title = "Speed Hack",
+    Flag = "SpeedHack",
+})
+
+MiscTab:Slider({
+    Title = "WalkSpeed",
+    Value = { Min = 16, Max = 200, Default = 50 },
+    Flag = "WalkSpeed",
+})
+
+MiscTab:Button({
+    Title = "Copy Position",
+    Callback = function()
+        local pos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+        setclipboard(tostring(pos))
+        WindUI:Notify({ Title = "Position Copied", Content = tostring(pos) })
+    end
+})
+
+MiscTab:Button({
+    Title = "Destroy Hub",
+    Color = Color3.fromHex("#ff0000"),
+    Callback = function()
+        Window:Destroy()
+    end
+})
+
+--   NOTIFIKASI AWAL
+
+WindUI:Notify({
+    Title = "Combat Hub Loaded",
+    Content = "Selamat bertarung! 🔥",
+    Duration = 5,
 })
