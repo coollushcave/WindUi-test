@@ -1,37 +1,15 @@
-local WindUI = loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"
-))()
-
 local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
 
 local Window = WindUI:CreateWindow({
     Title = "Nama Hub Kamu",
-    Icon = "star",           -- bisa pakai icon lucide/solar dll
-    Theme = "Dark",          -- Dark, Light, Rose, Indigo, dll
-    Folder = "NamaFolderSave", -- buat config saving
+    Icon = "solar:folder-2-bold-duotone",   -- contoh icon
+    Folder = "NamaFolderSave",              -- penting buat save config
+    -- Theme = "Dark",                      -- bisa diubah
+    NewElements = true,
+    
+    OpenButton = {
+        Title = "Open UI",
+        Enabled = true,
+        Draggable = true,
+    },
 })
-
-local Tab = Window:Tab({
-    Title = "Main",
-    Icon = "home"
-})
-
-Tab:Button({
-    Title = "Tombol Test",
-    Callback = function()
-        print("Tombol diklik!")
-        WindUI:Notify({
-            Title = "Notif",
-            Content = "Halo dari WindUI!"
-        })
-    end
-})
-
-Tab:Toggle({
-    Title = "Toggle Example",
-    Default = false,
-    Callback = function(state)
-        print("Toggle:", state)
-    end
-})
-
