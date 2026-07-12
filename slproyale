@@ -2,168 +2,125 @@ local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footag
 
 local Window = WindUI:CreateWindow({
     Title = "Combat Hub",
-    Icon = "sword",                    -- atau "solar:sword-bold"
-    Folder = "CombatHub_Save",
+    Icon = "solar:sword-bold",
+    Folder = "CombatHubV2",
     NewElements = true,
-    
+
     OpenButton = {
         Title = "Open Combat Hub",
         Enabled = true,
         Draggable = true,
-        Scale = 0.6,
     },
 })
 
---   TABS
-
-local MainTab = Window:Tab({
-    Title = "Main",
-    Icon = "solar:home-2-bold",
-})
+-- ==================== TABS ====================
 
 local CombatTab = Window:Tab({
     Title = "Combat",
-    Icon = "sword",
+    Icon = "solar:sword-bold",
 })
 
 local VisualTab = Window:Tab({
     Title = "Visual",
-    Icon = "eye",
+    Icon = "solar:eye-bold",
 })
 
 local MiscTab = Window:Tab({
     Title = "Misc",
-    Icon = "settings",
+    Icon = "solar:settings-bold",
 })
 
+-- ==================== COMBAT ====================
 
---   MAIN TAB
-
-
-MainTab:Section({ Title = "Status" })
-
-MainTab:Toggle({
-    Title = "Auto Enable",
-    Default = true,
-    Flag = "AutoEnable",
+local CombatSection = CombatTab:Section({
+    Title = "Combat Features",
 })
 
-MainTab:Button({
-    Title = "Reset Character",
-    Callback = function()
-        local player = game.Players.LocalPlayer
-        if player.Character then
-            player.Character:BreakJoints()
-        end
-    end
-})
-
-
---   COMBAT TAB
-
-
-CombatTab:Section({ Title = "Combat Features" })
-
-CombatTab:Toggle({
+CombatSection:Toggle({
     Title = "Kill Aura",
-    Desc = "Auto attack nearby enemies",
+    Desc = "Auto attack nearby players",
     Flag = "KillAura",
-    Callback = function(state)
-        print("Kill Aura:", state)
-        -- Taruh logic Kill Aura di sini
-    end
 })
 
-CombatTab:Slider({
+CombatSection:Slider({
     Title = "Kill Aura Range",
-    Value = { Min = 5, Max = 50, Default = 20 },
-    Flag = "KRange",
+    Value = { Min = 10, Max = 60, Default = 25 },
+    Flag = "KillAuraRange",
 })
 
-CombatTab:Toggle({
-    Title = "Auto Parry / Block",
+CombatSection:Toggle({
+    Title = "Auto Parry",
+    Desc = "Automatic block/parry",
     Flag = "AutoParry",
 })
 
-CombatTab:Toggle({
+CombatSection:Toggle({
     Title = "Auto Dodge",
     Flag = "AutoDodge",
 })
 
-CombatTab:Toggle({
-    Title = "Infinite Stamina",
+CombatSection:Toggle({
+    Title = "Infinite Stamina / Energy",
     Flag = "InfStamina",
 })
 
---   VISUAL TAB
+-- ==================== VISUAL ====================
 
-VisualTab:Section({ Title = "ESP & Visual" })
-
-VisualTab:Toggle({
-    Title = "Player ESP",
-    Flag = "ESP",
-    Callback = function(state)
-        print("ESP:", state)
-    end
+local VisualSection = VisualTab:Section({
+    Title = "Visuals",
 })
 
-VisualTab:Toggle({
-    Title = "Show Health Bar",
+VisualSection:Toggle({
+    Title = "Player ESP",
+    Flag = "ESP",
+})
+
+VisualSection:Toggle({
+    Title = "Health Bar",
     Flag = "HealthBar",
 })
 
-VisualTab:Colorpicker({
+VisualSection:Colorpicker({
     Title = "ESP Color",
-    Default = Color3.fromHex("#ff0000"),
-    Flag = "ESPColor",
+    Default = Color3.fromHex("#ff2d55"),
 })
 
-VisualTab:Toggle({
+VisualSection:Toggle({
     Title = "Full Bright",
-    Callback = function(state)
-        if state then
-            game:GetService("Lighting").Brightness = 2
-            game:GetService("Lighting").ClockTime = 14
-        end
-    end
+    Flag = "FullBright",
 })
 
---   MISC TAB
+-- ==================== MISC ====================
 
-MiscTab:Section({ Title = "Miscellaneous" })
+local MiscSection = MiscTab:Section({
+    Title = "Miscellaneous",
+})
 
-MiscTab:Toggle({
+MiscSection:Toggle({
     Title = "Speed Hack",
     Flag = "SpeedHack",
 })
 
-MiscTab:Slider({
+MiscSection:Slider({
     Title = "WalkSpeed",
-    Value = { Min = 16, Max = 200, Default = 50 },
-    Flag = "WalkSpeed",
+    Value = { Min = 16, Max = 250, Default = 70 },
+    Flag = "WalkSpeedValue",
 })
 
-MiscTab:Button({
-    Title = "Copy Position",
+MiscSection:Button({
+    Title = "Copy My Position",
     Callback = function()
-        local pos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
-        setclipboard(tostring(pos))
-        WindUI:Notify({ Title = "Position Copied", Content = tostring(pos) })
+        local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if root then
+            setclipboard(tostring(root.Position))
+            WindUI:Notify({Title = "Success", Content = "Position copied to clipboard!"})
+        end
     end
 })
 
-MiscTab:Button({
-    Title = "Destroy Hub",
-    Color = Color3.fromHex("#ff0000"),
-    Callback = function()
-        Window:Destroy()
-    end
-})
-
---   NOTIFIKASI AWAL
-
+-- Notifikasi saat load
 WindUI:Notify({
-    Title = "Combat Hub Loaded",
-    Content = "Selamat bertarung! 🔥",
-    Duration = 5,
+    Title = "Combat Hub",
+    Content = "Loaded successfully! 🔥",
+    Duration = 4,
 })
