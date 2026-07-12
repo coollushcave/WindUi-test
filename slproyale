@@ -1,18 +1,23 @@
 local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
 
 local Window = WindUI:CreateWindow({
-    Title = "Combat Hub",
-    Icon = "solar:sword-bold",
-    Folder = "CombatHub",
+    Title = ".ftgs hub  |  WindUI Example",
+    Folder = "ftgshub",
+    Icon = "solar:folder-2-bold-duotone",
     NewElements = true,
+
     OpenButton = {
-        Title = "Open Combat Hub",
+        Title = "Open .ftgs hub UI",
         Enabled = true,
         Draggable = true,
     },
+    Topbar = {
+        Height = 44,
+        ButtonsType = "Mac",
+    },
 })
 
--- ==================== COMBAT ====================
+-- Combat Tab
 local CombatTab = Window:Tab({
     Title = "Combat",
     Icon = "solar:sword-bold",
@@ -20,14 +25,12 @@ local CombatTab = Window:Tab({
 
 CombatTab:Toggle({
     Title = "Kill Aura",
-    Desc = "Auto hit nearby enemy",
 })
 
 CombatTab:Space()
 
 CombatTab:Toggle({
     Title = "Auto Parry",
-    Desc = "Auto block/parry",
 })
 
 CombatTab:Space()
@@ -42,7 +45,7 @@ CombatTab:Toggle({
     Title = "Infinite Stamina",
 })
 
--- ==================== VISUAL ====================
+-- Visual Tab
 local VisualTab = Window:Tab({
     Title = "Visual",
     Icon = "solar:eye-bold",
@@ -54,18 +57,12 @@ VisualTab:Toggle({
 
 VisualTab:Space()
 
-VisualTab:Toggle({
-    Title = "Health Bar",
-})
-
-VisualTab:Space()
-
 VisualTab:Colorpicker({
     Title = "ESP Color",
-    Default = Color3.fromHex("#ff2d55"),
+    Default = Color3.fromHex("#30ff6a"),
 })
 
--- ==================== MISC ====================
+-- Misc
 local MiscTab = Window:Tab({
     Title = "Misc",
     Icon = "solar:settings-bold",
@@ -82,20 +79,7 @@ MiscTab:Slider({
     Value = { Min = 16, Max = 200, Default = 60 },
 })
 
-MiscTab:Space()
-
-MiscTab:Button({
-    Title = "Copy Position",
-    Callback = function()
-        local pos = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if pos then
-            setclipboard(tostring(pos.Position))
-            WindUI:Notify({Title = "Copied", Content = "Position copied!"})
-        end
-    end
-})
-
 WindUI:Notify({
     Title = "Combat Hub",
-    Content = "Loaded!",
+    Content = "Loaded successfully",
 })
