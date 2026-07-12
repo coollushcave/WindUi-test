@@ -1,52 +1,76 @@
-local AutoCollectConnection = nil
+-- ==================== AUTO COLLECT BULL'S ESSENCE ====================
+local AutoCollectEnabled = false
 local CurrentTarget = nil
 
-local function FindBullEssence()
+local function FindNearestBullEssence()
+    local character = game.Players.LocalPlayer.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return nil end
+    
+    local rootPos = character.HumanoidRootPart.Position
+    local nearest = nil
+    local shortestDist = math.huge
+
     for _, item in ipairs(workspace.Items:GetChildren()) do
-        if item.Name == "Bull's essence" and item:FindFirstChild("HumanoidRootPart") or item:FindFirstChildWhichIsA("BasePart") then
-            return item
+        if item.Name == "Bull's essence" then
+            local part = item:FindFirstChild("HumanoidRootPart") or item:FindFirstChildWhichIsA("BasePart")
+            if part then
+                local dist = (part.Position - rootPos).Magnitude
+                if dist < shortestDist then
+                    shortestDist = dist
+                    nearest = item
+                end
+            end
         end
     end
-    return nil
+    return nearest
 end
 
-local function StartAutoCollect()
-    if AutoCollectConnection then return end
-
-    AutoCollectConnection = game:GetService("RunService").Heartbeat:Connect(function()
+local function AutoCollectLoop()
+    while AutoCollectEnabled and game.Players.LocalPlayer.Character do
         local character = game.Players.LocalPlayer.Character
-        if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+        local root = character:FindFirstChild("HumanoidRootPart")
+        if not root then break end
 
-        local root = character.HumanoidRootPart
-
-        -- Kalau sedang di target dan target masih ada
+        -- Cek apakah target saat ini masih ada
         if CurrentTarget and CurrentTarget.Parent then
-            local targetRoot = CurrentTarget:FindFirstChild("HumanoidRootPart") or CurrentTarget:FindFirstChildWhichIsA("BasePart")
-            if targetRoot then
-                root.CFrame = targetRoot.CFrame + Vector3.new(0, 5, 0)  -- TP ke atas item
-                return
-            end
+            wait(0.5)  -- cek setiap 0.5 detik
+            continue
         end
 
-        -- Cari target baru kalau target lama sudah hilang
-        local newTarget = FindBullEssence()
-        if newTarget then
-            CurrentTarget = newTarget
-            local targetRoot = newTarget:FindFirstChild("HumanoidRootPart") or newTarget:FindFirstChildWhichIsA("BasePart")
-            if targetRoot then
-                root.CFrame = targetRoot.CFrame + Vector3.new(0, 5, 0)
+        -- Cari target baru
+        local target = FindNearestBullEssence()
+        if target then
+            CurrentTarget = target
+            local part = target:FindFirstChild("HumanoidRootPart") or target:FindFirstChildWhichIsA("BasePart")
+            
+            if part then
+                root.CFrame = part.CFrame + Vector3.new(0, 6, 0)  -- TP sekali ke atas item
+                print("Teleported to:", target:GetFullName())
             end
+        else
+            wait(1)
         end
-    end)
-end
 
-local function StopAutoCollect()
-    if AutoCollectConnection then
-        AutoCollectConnection:Disconnect()
-        AutoCollectConnection = nil
+        wait(0.3)  -- anti lag
     end
-    CurrentTarget = nil
 end
+
+-- ==================== TOGGLE ====================
+ItemsTab:Toggle({
+    Title = "Auto collect",
+    Desc = "Collect priority items without waiting for the round countdown",
+    Callback = function(state)
+        AutoCollectEnabled = state
+        CurrentTarget = nil
+        
+        if state then
+            WindUI:Notify({Title = "Auto Collect", Content = "ON - Targeting nearest Bull's Essence"})
+            task.spawn(AutoCollectLoop)  -- Jalankan di thread terpisah
+        else
+            WindUI:Notify({Title = "Auto Collect", Content = "OFF"})
+        end
+    end
+})
 
 local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
 
